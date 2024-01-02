@@ -98,6 +98,7 @@ def add_u_pref_rel_decay(rating_df, beta = 0.25, method = 'linear', verbose = Fa
     new_df = None
     _beta = beta
     _base = 0.000000001
+    _win_unit = 24*3600
     
     if verbose:
         print(f'The beta in user drift:{_beta}')
@@ -118,8 +119,8 @@ def add_u_pref_rel_decay(rating_df, beta = 0.25, method = 'linear', verbose = Fa
         _max_distance = _end - _start
         
         # Calculate new timestamp for each user
-        # rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = (1 + ((rating_df['timestamp'] - _start) / _win_unit)) ** (_beta)
-        
+        if method == 'log_old':
+            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = (1 + ((rating_df['timestamp'] - _start) / _win_unit)) ** (_beta)
         if method == 'linear':
             rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + ((rating_df['timestamp'] - _start) / _max_distance)
         if method == 'log':
@@ -144,18 +145,14 @@ def add_u_pref_rel_decay(rating_df, beta = 0.25, method = 'linear', verbose = Fa
     if verbose:
         # Get the sorted values of 'new_u_ts_id'
         sorted_values = sorted(new_df['u_rel_decay'])
-
         # Plot the sorted values
         plt.plot(sorted_values)
-
         # Add labels and title
         plt.xlabel('Index (after sorting)')
         plt.ylabel('u_rel_decay')
         plt.title('Sorted Plot of u_rel_decay')
-
         # Show the plot
         plt.show()
-
     
     # Sum of local_agg_emb_len values for all users
     local_agg_emb_len = sum(local_agg_emb_len_list)

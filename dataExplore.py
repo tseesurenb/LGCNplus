@@ -21,7 +21,7 @@ exp_beta = 5
 
 _bias = 0.0001
     
-_beta = 0.3
+_beta = 0.8
 rating_df['u_abs_decay_linear'] = _bias + np.power(((rating_df['timestamp'] - _start) / _total_dist), 1) # linear
 rating_df['u_abs_decay_log'] = _bias + np.power(((rating_df['timestamp'] - _start) / _total_dist), _beta) # log
 rating_df['u_abs_decay_recip'] = _bias + np.power(((rating_df['timestamp'] - _start) / _total_dist), 1/_beta) # reciprocal
