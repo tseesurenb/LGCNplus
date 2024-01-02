@@ -77,15 +77,15 @@ def add_u_abs_decay(rating_df, beta = 0.25, method = 'linear', verbose = False):
     _max_distance = _end - _start 
     
     if method == 'linear':
-        rating_df['u_abs_decay'] = _base + ((rating_df['timestamp'] - _start) / _max_distance)
+        rating_df['u_abs_decay'] = _base + ((rating_df['timestamp'] - _start) / _win_unit)
     if method == 'log':
-        rating_df['u_abs_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _max_distance), _beta)
+        rating_df['u_abs_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), _beta)
     if method == 'log_old':
         rating_df['u_abs_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), _beta)
     if method == 'recip':
-        rating_df['u_abs_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _max_distance), 1/_beta)
+        rating_df['u_abs_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), 1/_beta)
     if method == 'exp':
-        rating_df['u_abs_decay'] = _base + np.exp(-_beta * (rating_df['timestamp'] - _start) / _max_distance)
+        rating_df['u_abs_decay'] = _base + np.exp(-_beta * (rating_df['timestamp'] - _start) / _win_unit)
                 
     
     print(f'The absolute decay method is {method} with param: {beta}')
@@ -125,13 +125,13 @@ def add_u_pref_rel_decay(rating_df, beta = 0.25, method = 'linear', verbose = Fa
         if method == 'log_old':
             rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = (1 + ((rating_df['timestamp'] - _start) / _win_unit)) ** (_beta)
         elif method == 'linear':
-            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + ((rating_df['timestamp'] - _start) / _max_distance)
+            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + ((rating_df['timestamp'] - _start) / _win_unit)
         elif method == 'log':
-            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _max_distance), _beta)
+            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), _beta)
         elif method == 'recip':
-            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _max_distance), 1/_beta)
+            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), 1/_beta)
         elif method == 'exp':
-            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.exp(-_beta * (rating_df['timestamp'] - _start) / _max_distance)
+            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.exp(-_beta * (rating_df['timestamp'] - _start) / _win_unit)
         
         # Create a new DataFrame for the user
         new_user_df = rating_df.loc[rating_df['userId'] == user_id, ['userId', 'itemId', 'rating', 'timestamp', 'u_abs_decay', 'u_rel_decay']]

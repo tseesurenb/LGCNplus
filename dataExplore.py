@@ -21,7 +21,7 @@ exp_beta = 5
 
 _bias = 0.0001
     
-_beta = 0.001
+_beta = 0.01
 rating_df['u_abs_decay_linear'] = _bias + np.power(((rating_df['timestamp'] - _start) / _dist_unit), 1) # linear
 rating_df['u_abs_decay_log'] = _bias + np.power(((rating_df['timestamp'] - _start) / _dist_unit), _beta) # log
 rating_df['u_abs_decay_recip'] = _bias + np.power(((rating_df['timestamp'] - _start) / _dist_unit), 1/_beta) # reciprocal
@@ -47,6 +47,9 @@ plt.ylabel('u_abs_decay')
 plt.title('Sorted Plot of u_abs_decay')
 # Add legend
 plt.legend(loc='upper left')
+
+# Set the y-axis limits to be between 1 and 1.1
+plt.ylim(1, 1.1)
 
 
 # Show the plot
