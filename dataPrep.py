@@ -65,6 +65,7 @@ def add_u_abs_decay(rating_df, beta = 0.25, method = 'linear', verbose = False):
     _beta = beta # hyperparameter that defines time distance weight
     _exp_beta = 5
     _base = 0.000000001
+    _win_unit = 24*3600
     
     if verbose:
         print(f'The beta in item drift:{_beta}')
@@ -79,6 +80,8 @@ def add_u_abs_decay(rating_df, beta = 0.25, method = 'linear', verbose = False):
         rating_df['u_abs_decay'] = _base + ((rating_df['timestamp'] - _start) / _max_distance)
     if method == 'log':
         rating_df['u_abs_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _max_distance), _beta)
+    if method == 'log_old':
+        rating_df['u_abs_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), _beta)
     if method == 'recip':
         rating_df['u_abs_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _max_distance), 1/_beta)
     if method == 'exp':
@@ -121,13 +124,13 @@ def add_u_pref_rel_decay(rating_df, beta = 0.25, method = 'linear', verbose = Fa
         # Calculate new timestamp for each user
         if method == 'log_old':
             rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = (1 + ((rating_df['timestamp'] - _start) / _win_unit)) ** (_beta)
-        if method == 'linear':
+        elif method == 'linear':
             rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + ((rating_df['timestamp'] - _start) / _max_distance)
-        if method == 'log':
+        elif method == 'log':
             rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _max_distance), _beta)
-        if method == 'recip':
+        elif method == 'recip':
             rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _max_distance), 1/_beta)
-        if method == 'exp':
+        elif method == 'exp':
             rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.exp(-_beta * (rating_df['timestamp'] - _start) / _max_distance)
         
         # Create a new DataFrame for the user

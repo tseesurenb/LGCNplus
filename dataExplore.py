@@ -21,25 +21,25 @@ exp_beta = 5
 
 _bias = 0.0001
     
-_beta = 0.8
-rating_df['u_abs_decay_linear'] = _bias + np.power(((rating_df['timestamp'] - _start) / _total_dist), 1) # linear
-rating_df['u_abs_decay_log'] = _bias + np.power(((rating_df['timestamp'] - _start) / _total_dist), _beta) # log
-rating_df['u_abs_decay_recip'] = _bias + np.power(((rating_df['timestamp'] - _start) / _total_dist), 1/_beta) # reciprocal
-rating_df['u_abs_decay_exp'] = _bias + np.exp(-exp_beta * (rating_df['timestamp'] - _start) / _total_dist) # exp
+_beta = 0.001
+rating_df['u_abs_decay_linear'] = _bias + np.power(((rating_df['timestamp'] - _start) / _dist_unit), 1) # linear
+rating_df['u_abs_decay_log'] = _bias + np.power(((rating_df['timestamp'] - _start) / _dist_unit), _beta) # log
+rating_df['u_abs_decay_recip'] = _bias + np.power(((rating_df['timestamp'] - _start) / _dist_unit), 1/_beta) # reciprocal
+rating_df['u_abs_decay_exp'] = _bias + np.exp(-exp_beta * (rating_df['timestamp'] - _start) / _dist_unit) # exp
 
 
 
 sorted_values = sorted(rating_df['u_abs_decay_linear'])
-plt.plot(sorted_values, label = 'linear')
+#plt.plot(sorted_values, label = 'linear')
     
 sorted_values = sorted(rating_df['u_abs_decay_log'])
 plt.plot(sorted_values, label = 'log')
 
 sorted_values = sorted(rating_df['u_abs_decay_recip'])
-plt.plot(sorted_values, label = 'recip')
+#plt.plot(sorted_values, label = 'recip')
 
 sorted_values = sorted(rating_df['u_abs_decay_exp'])
-plt.plot(sorted_values, label = 'exp')
+#plt.plot(sorted_values, label = 'exp')
 
 # Add labels and title
 plt.xlabel('Index (after sorting)')
