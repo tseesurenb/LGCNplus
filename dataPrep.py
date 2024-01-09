@@ -60,15 +60,14 @@ def load_data(dataset = "ml100k", verbose = False):
     return rating_df, num_users, num_items, mean_rating
 
 # add time distance scaled with beta
-def add_u_abs_decay(rating_df, beta = 0.25, method = 'linear', verbose = False):
+def add_u_abs_decay(rating_df, beta = 0.15, method = 'log_old', verbose = False):
     
-    _beta = beta # hyperparameter that defines time distance weight
-    _exp_beta = 5
+    _beta = beta
     _base = 0.000000001
     _win_unit = 24*3600
     
     if verbose:
-        print(f'The beta in item drift:{_beta}')
+        print(f'The a_beta in user absolute drift:{_beta}')
         
     rating_df["timestamp"] = rating_df["timestamp"].astype("int64")
     _start = rating_df['timestamp'].min()
@@ -87,24 +86,79 @@ def add_u_abs_decay(rating_df, beta = 0.25, method = 'linear', verbose = False):
     if method == 'exp':
         rating_df['u_abs_decay'] = _base + np.exp(-_beta * (rating_df['timestamp'] - _start) / _win_unit)
                 
-    
     print(f'The absolute decay method is {method} with param: {beta}')
-    #print(rating_df['u_abs_decay'])
-    num_uq_dists = len(rating_df['u_abs_decay'].unique())
     
-    return num_uq_dists
+    return rating_df
+
 
 # convert timestamp to day, week, month level
-def add_u_pref_rel_decay(rating_df, beta = 0.25, method = 'linear', verbose = False):
+def add_u_rel_decay2(rating_df, beta = 0.25, method = 'old_log', verbose = False):
     
     local_agg_emb_len = 0
     new_df = None
     _beta = beta
     _base = 0.000000001
     _win_unit = 24*3600
+    _plot = False
     
     if verbose:
-        print(f'The beta in user drift:{_beta}')
+        print(f'The r_beta in user relative drift:{_beta}, win:{_win_unit}')
+        
+    # Convert timestamp to int64
+    rating_df["timestamp"] = rating_df["timestamp"].astype("int64")
+    
+    # Find the minimum and maximum timestamp for each user
+    user_min_timestamp = rating_df.groupby('userId')['timestamp'].min()
+    user_max_timestamp = rating_df.groupby('userId')['timestamp'].max()
+    
+    # Assuming your DataFrame is named rating_df
+    
+    # Step 2: Calculate the minimum timestamp for each userId
+    min_timestamp_per_user = rating_df.groupby('userId')['timestamp'].min().reset_index()
+    min_timestamp_per_user.columns = ['userId', 'min_timestamp']
+
+    # Step 3: Merge the minimum timestamps back into the original DataFrame
+    rating_df = pd.merge(rating_df, min_timestamp_per_user, on='userId')
+
+    # Step 4: Calculate the 'u_rel_decay' column
+    #rating_df['u_rel_decay'] = ((rating_df['timestamp'] - rating_df['min_timestamp']) /_win_unit)**_beta
+    #rating_df['u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), _beta)
+    rating_df['u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - rating_df['min_timestamp']) / _win_unit), _beta)
+    
+    # Step 5: Drop the 'min_timestamp' column if you no longer need it
+    rating_df = rating_df.drop('min_timestamp', axis=1)
+
+    # Now, rating_df contains the new 'u_rel_decay' column
+    
+    if _plot:
+        # Get the sorted values of 'new_u_ts_id'
+        sorted_values = sorted(rating_df['u_rel_decay'])
+        # Plot the sorted values
+        plt.plot(sorted_values)
+        # Add labels and title
+        plt.xlabel('Index (after sorting)')
+        plt.ylabel('u_rel_decay')
+        plt.title('Sorted Plot of u_rel_decay')
+        # Show the plot
+        plt.show()
+    
+    print(f'The relative decay method is {method} with param: {beta}')
+    
+    return rating_df
+    
+
+# convert timestamp to day, week, month level
+def add_u_rel_decay(rating_df, beta = 0.25, method = 'old_log', verbose = False):
+    
+    local_agg_emb_len = 0
+    new_df = None
+    _beta = beta
+    _base = 0.000000001
+    _win_unit = 24*3600
+    _plot = False
+    
+    if verbose:
+        print(f'The beta in user relative drift:{_beta}, win:{_win_unit}')
         
     # Convert timestamp to int64
     rating_df["timestamp"] = rating_df["timestamp"].astype("int64")
@@ -120,19 +174,27 @@ def add_u_pref_rel_decay(rating_df, beta = 0.25, method = 'linear', verbose = Fa
     for user_id, (_start, _end) in zip(user_min_timestamp.index, zip(user_min_timestamp, user_max_timestamp)):
         # Calculate _dist for each user
         _max_distance = _end - _start
+        _current_time = rating_df.loc[rating_df['userId'] == user_id, 'timestamp']
         
         # Calculate new timestamp for each user
         if method == 'log_old':
-            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = (1 + ((rating_df['timestamp'] - _start) / _win_unit)) ** (_beta)
+            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + (((rating_df['userId'] - _start) / _win_unit) ** _beta)
+            #rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + (((_current_time - _start) / _win_unit) ** _beta)
         elif method == 'linear':
-            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + ((rating_df['timestamp'] - _start) / _win_unit)
+            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + ((_current_time - _start) / _win_unit)
         elif method == 'log':
-            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), _beta)
+            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.power(((_current_time - _start) / _win_unit), _beta)
         elif method == 'recip':
-            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), 1/_beta)
+            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.power(((_current_time - _start) / _win_unit), 1/_beta)
         elif method == 'exp':
-            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.exp(-_beta * (rating_df['timestamp'] - _start) / _win_unit)
+            rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'] = _base + np.exp(-_beta * (_current_time - _start) / _win_unit)
         
+        #if user_id == 0:
+        #    print(f'len of timestamps: {len(_current_time)}')
+        #    print(f'min: {_start}')
+        #    print(_current_time)
+        #    print(rating_df.loc[rating_df['userId'] == user_id, 'u_rel_decay'])
+            
         # Create a new DataFrame for the user
         new_user_df = rating_df.loc[rating_df['userId'] == user_id, ['userId', 'itemId', 'rating', 'timestamp', 'u_abs_decay', 'u_rel_decay']]
         
@@ -145,7 +207,7 @@ def add_u_pref_rel_decay(rating_df, beta = 0.25, method = 'linear', verbose = Fa
     # Concatenate DataFrames for all users
     new_df = pd.concat(new_df_list, ignore_index=True)
     
-    if verbose:
+    if _plot:
         # Get the sorted values of 'new_u_ts_id'
         sorted_values = sorted(new_df['u_rel_decay'])
         # Plot the sorted values
@@ -205,8 +267,20 @@ def get_edge_values(rating_df, rating_threshold = 0, verbose = False):
     _dst = [item_id for item_id in rating_df["itemId"]]
     _link_vals = rating_df["rating"].values
     _ts = rating_df["timestamp"].values
-    _abs_decay = rating_df["u_abs_decay"].values
-    _rel_decay = rating_df["u_rel_decay"].values
+    
+    if "u_abs_decay" in rating_df.columns:
+        _abs_decay = rating_df["u_abs_decay"].values
+        print('The u_abs_decay exists.')
+    else:
+        _abs_decay = rating_df["timestamp"].values
+        print('The u_abs_decay does not exists.')
+    
+    if "u_rel_decay" in rating_df.columns:
+        _rel_decay = rating_df["u_rel_decay"].values
+        print('The u_rel_decay exists.')
+    else:
+        _rel_decay = rating_df["timestamp"].values
+        print('The u_rel_decay does not exists.')
     
     _true_edges = torch.from_numpy(rating_df["rating"].values).view(-1, 1).to(torch.long) >= rating_threshold
     

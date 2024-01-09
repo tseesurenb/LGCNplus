@@ -87,7 +87,6 @@ class LGCN(MessagePassing):
         if self.u_abs_drift:
             self._u_abs_drift_emb = nn.Embedding(num_embeddings=num_users, embedding_dim=self.embedding_dim)     
             nn.init.zeros_(self._u_abs_drift_emb.weight)
-             
             self._u_abs_drift_emb.weight.requires_grad = True
             if self.verbose:
                 print("The absolute user drift temporal embedding is ON.")
@@ -95,7 +94,6 @@ class LGCN(MessagePassing):
         if self.u_rel_drift:
             self._u_rel_drift_emb = nn.Embedding(num_embeddings=num_users, embedding_dim=self.embedding_dim)     
             nn.init.zeros_(self._u_rel_drift_emb.weight)
-             
             self._u_rel_drift_emb.weight.requires_grad = True
             if self.verbose:
                 print("The relative user drift temporal embedding is ON.")

@@ -42,9 +42,12 @@ r_method = config['r_method']
 # load the dataset
 rating_df, num_users, num_items, g_mean_rating = dp.load_data(dataset=g_dataset, verbose=g_verbose)
 # add time distance column by calculating timestamp from the fixed minimum point
-num_uq_dists = dp.add_u_abs_decay(rating_df=rating_df, beta=g_a_beta, method=a_method, verbose=g_verbose)
+if g_model == 'lgcn_b_a' or g_model == 'lgcn_b_ar':
+    rating_df = dp.add_u_abs_decay(rating_df=rating_df, beta=g_a_beta, method=a_method, verbose=g_verbose)
 
-rating_df, num_uq_dists = dp.add_u_pref_rel_decay(rating_df=rating_df, beta=g_r_beta, method=r_method, verbose=False)
+if g_model == 'lgcn_b_r' or g_model == 'lgcn_b_ar':
+    rating_df = dp.add_u_rel_decay2(rating_df=rating_df, beta=g_r_beta, method=r_method, verbose=g_verbose)
+    
 
 # get user statistics list: userId, # of ratings, mean rating, rating time distance
 u_stats = dp.get_user_stats(rating_df=rating_df)

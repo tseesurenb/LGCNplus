@@ -24,9 +24,9 @@ def parse_args():
     parser.add_argument('--decay', type=float, default=0, help="the weight decay for l2 normalizaton")
     parser.add_argument('--path', type=str, default="./checkpoints", help="path to save weights")
     parser.add_argument('--top_k', type=int, default=10, help="@k test list")
-    parser.add_argument('--r_beta', type=float, default=0.40)
-    parser.add_argument('--a_beta', type=float, default=0.25)
-    parser.add_argument('--a_method', type=str, default='linear')
-    parser.add_argument('--r_method', type=str, default='linear')
+    parser.add_argument('--r_beta', type=float, default=0.01)
+    parser.add_argument('--a_beta', type=float, default=0.15)
+    parser.add_argument('--a_method', type=str, default='log_old')
+    parser.add_argument('--r_method', type=str, default='log_old')
     
     return parser.parse_args()
