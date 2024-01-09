@@ -50,9 +50,9 @@ if g_model == 'lgcn_b_r' or g_model == 'lgcn_b_ar':
     
 
 # get user statistics list: userId, # of ratings, mean rating, rating time distance
-u_stats = dp.get_user_stats(rating_df=rating_df)
+u_stats = None #dp.get_user_stats(rating_df=rating_df)
 # get item statistics list: itemId, # of ratings, mean rating, rating time distance
-i_stats = dp.get_item_stats(rating_df=rating_df)
+i_stats = None #dp.get_item_stats(rating_df=rating_df)
 
 e_idx, e_vals, e_ts, e_abs_t_decay, e_rel_t_decay = dp.get_edge_values(rating_df)
 
