@@ -263,10 +263,14 @@ def get_item_stats(rating_df, verbose = False):
 # get edge ids and edge values between users (source) and items (dest)
 def get_edge_values(rating_df, rating_threshold = 0, verbose = False):
 
+    rating_df["timestamp"] = rating_df["timestamp"].astype("int64")
+    
     _src = [user_id for user_id in rating_df["userId"]]
     _dst = [item_id for item_id in rating_df["itemId"]]
     _link_vals = rating_df["rating"].values
+    
     _ts = rating_df["timestamp"].values
+    
     
     if "u_abs_decay" in rating_df.columns:
         _abs_decay = rating_df["u_abs_decay"].values
