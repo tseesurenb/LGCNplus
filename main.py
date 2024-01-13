@@ -202,8 +202,8 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
         #if epoch % g_epochs_per_lr_decay == 0 and epoch != 0:
         #    scheduler.step()
         
-    tqdm.write(f"\033[1mMinimum RMSE: {min_RMSE_loss} at epoch {min_RMSE_epoch} with Recall, Precision: {min_RECALL, min_PRECISION}\033[0m")
-    tqdm.write(f"The experiment is complete.")
+    tqdm.write(f"\033[1mMinimum Seed {seed} -> RMSE: {min_RMSE_loss} at epoch {min_RMSE_epoch} with Recall, Precision: {min_RECALL, min_PRECISION}\033[0m")
+    #tqdm.write(f"The experiment is complete.")
     
     return min_RMSE_loss, min_RECALL, min_PRECISION
 
@@ -238,8 +238,13 @@ for seed in rand_seed:
                                         config=config,
                                         g_seed=seed)
     
+    #print(f"Seed {seed} -> RMSE: {rmse:0.4f}, reCall:{recall:0.4f}, Prec:{prec:0.4f}")
     rmses.append(rmse)
     recalls.append(recall)
     precs.append(prec)
-    
-print()
+
+
+
+print(f"RMSE: {rmses[0]:.4f}, {rmses[1]:.4f}, {rmses[2]:.4f}, {rmses[3]:.4f}, {rmses[4]:.4f} -> {sum(rmses) / len(rmses): .4f}")
+print(f"reCALL: {recalls[0]:.4f}, {recalls[1]:.4f}, {recalls[2]:.4f}, {recalls[3]:.4f}, {recalls[4]:.4f} -> {sum(recalls) / len(recalls): .4f}")
+print(f"PREC: {precs[0]:.4f}, {precs[1]:.4f}, {precs[2]:.4f}, {precs[3]:.4f}, {precs[4]:.4f} -> {sum(precs) / len(precs): .4f}")
