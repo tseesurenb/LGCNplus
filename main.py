@@ -37,6 +37,7 @@ g_seed = config['seed']
 g_top_k = config['top_k']
 a_method = config['a_method']
 r_method = config['r_method']
+g_win = config['win']
 
 
 # load the dataset
@@ -46,7 +47,7 @@ if g_model == 'lgcn_b_a' or g_model == 'lgcn_b_ar':
     rating_df = dp.add_u_abs_decay(rating_df=rating_df, beta=g_a_beta, method=a_method, verbose=g_verbose)
 
 if g_model == 'lgcn_b_r' or g_model == 'lgcn_b_ar':
-    rating_df = dp.add_u_rel_decay2(rating_df=rating_df, beta=g_r_beta, method=r_method, verbose=g_verbose)
+    rating_df = dp.add_u_rel_decay2(rating_df=rating_df, beta=g_r_beta, win = g_win, method=r_method, verbose=g_verbose)
     
 
 # get user statistics list: userId, # of ratings, mean rating, rating time distance

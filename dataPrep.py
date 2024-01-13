@@ -92,13 +92,13 @@ def add_u_abs_decay(rating_df, beta = 0.15, method = 'log_old', verbose = False)
 
 
 # convert timestamp to day, week, month level
-def add_u_rel_decay2(rating_df, beta = 0.25, method = 'old_log', verbose = False):
+def add_u_rel_decay2(rating_df, beta = 0.25, win = 1, method = 'old_log', verbose = False):
     
     local_agg_emb_len = 0
     new_df = None
     _beta = beta
     _base = 0.000000001
-    _win_unit = 24*3600
+    _win_unit = 24*3600*win
     _plot = False
     
     if verbose:
@@ -148,13 +148,13 @@ def add_u_rel_decay2(rating_df, beta = 0.25, method = 'old_log', verbose = False
     
 
 # convert timestamp to day, week, month level
-def add_u_rel_decay(rating_df, beta = 0.25, method = 'old_log', verbose = False):
+def add_u_rel_decay(rating_df, beta = 0.25, win = 1, method = 'old_log', verbose = False):
     
     local_agg_emb_len = 0
     new_df = None
     _beta = beta
     _base = 0.000000001
-    _win_unit = 24*3600
+    _win_unit = 24*3600*win
     _plot = False
     
     if verbose:

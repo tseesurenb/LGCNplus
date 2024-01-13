@@ -41,6 +41,7 @@ config['verbose'] = args.verbose
 config['epochs_per_eval'] = args.epochs_per_eval
 config['epochs_per_lr_decay'] = args.epochs_per_lr_decay
 config['seed'] = args.seed
+config['win'] = args.win
 config['r_beta'] = args.r_beta
 config['a_beta'] = args.a_beta
 config['a_method'] = args.a_method
