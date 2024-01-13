@@ -29,5 +29,7 @@ def parse_args():
     parser.add_argument('--a_beta', type=float, default=0.15)
     parser.add_argument('--a_method', type=str, default='log_old')
     parser.add_argument('--r_method', type=str, default='log_old')
+    parser.add_argument('--loadedModel', type=bool, default=False)
+    
     
     return parser.parse_args()

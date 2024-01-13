@@ -37,6 +37,7 @@ g_seed = config['seed']
 g_top_k = config['top_k']
 a_method = config['a_method']
 r_method = config['r_method']
+g_loadedModel = config['loadedModel']
 g_win = config['win']
 
 
@@ -119,6 +120,10 @@ min_RMSE = 1000
 min_RMSE_epoch = 0
 min_RECALL = 0
 min_PRECISION = 0
+
+if g_loadedModel:
+    model.load_state_dict(torch.load('models/' + g_dataset + '_model.pt'))
+
 
 for epoch in tqdm(range(g_epochs), position=1, mininterval=5.0, ncols=100):
     start_time = time.time()

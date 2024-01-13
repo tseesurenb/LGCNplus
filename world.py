@@ -46,6 +46,7 @@ config['r_beta'] = args.r_beta
 config['a_beta'] = args.a_beta
 config['a_method'] = args.a_method
 config['r_method'] = args.r_method
+config['loadedModel'] = args.loadedModel
 
 #GPU = torch.cuda.is_available()
 #device = torch.device('cuda' if GPU else "cpu")
