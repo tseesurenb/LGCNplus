@@ -190,8 +190,10 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                     min_RMSE = np.sqrt(val_loss.item())
                     min_RMSE_loss = f_val_loss
                     min_RMSE_epoch = epoch
-                    min_RECALL = f_recall
-                    min_PRECISION = f_precision
+                    min_RECALL_f = f_recall
+                    min_PRECISION_f = f_precision
+                    min_RECALL = recall
+                    min_PRECISION = precision
 
                 if epoch %  (g_epochs_per_eval) == 0:
                     tqdm.write(f"[Epoch {f_epoch} - {f_time}]\tRMSE(train -> val): {f_train_loss}"
@@ -202,10 +204,10 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
         #if epoch % g_epochs_per_lr_decay == 0 and epoch != 0:
         #    scheduler.step()
         
-    tqdm.write(f"\033[1mMinimum Seed {seed} -> RMSE: {min_RMSE_loss} at epoch {min_RMSE_epoch} with Recall, Precision: {min_RECALL, min_PRECISION}\033[0m")
+    tqdm.write(f"\033[1mMinimum Seed {seed} -> RMSE: {min_RMSE_loss} at epoch {min_RMSE_epoch} with Recall, Precision: {min_RECALL_f, min_PRECISION_f}\033[0m")
     #tqdm.write(f"The experiment is complete.")
     
-    return min_RMSE_loss, min_RECALL, min_PRECISION
+    return min_RMSE, min_RECALL, min_PRECISION
 
 g_r_beta = config['r_beta']
 g_a_beta = config['a_beta']
@@ -224,7 +226,7 @@ if g_model == 'lgcn_b_a' or g_model == 'lgcn_b_ar':
 if g_model == 'lgcn_b_r' or g_model == 'lgcn_b_ar':
     rating_df = dp.add_u_rel_decay2(rating_df=rating_df, beta=g_r_beta, win = g_win, method=r_method, verbose=g_verbose)
 
-rand_seed = [7, 41, 91, 89, 12]
+rand_seed = [7, 12, 89, 91, 41]
 
 rmses = []
 recalls = []
@@ -243,8 +245,6 @@ for seed in rand_seed:
     recalls.append(recall)
     precs.append(prec)
 
-
-
-print(f"RMSE: {rmses[0]:.4f}, {rmses[1]:.4f}, {rmses[2]:.4f}, {rmses[3]:.4f}, {rmses[4]:.4f} -> {sum(rmses) / len(rmses): .4f}")
-print(f"reCALL: {recalls[0]:.4f}, {recalls[1]:.4f}, {recalls[2]:.4f}, {recalls[3]:.4f}, {recalls[4]:.4f} -> {sum(recalls) / len(recalls): .4f}")
-print(f"PREC: {precs[0]:.4f}, {precs[1]:.4f}, {precs[2]:.4f}, {precs[3]:.4f}, {precs[4]:.4f} -> {sum(precs) / len(precs): .4f}")
+print(f"  RMSE:\t {rmses[0]:.4f}, {rmses[1]:.4f}, {rmses[2]:.4f}, {rmses[3]:.4f}, {rmses[4]:.4f} -> {sum(rmses) / len(rmses):.4f}")
+print(f"Recall:\t {recalls[0]:.4f}, {recalls[1]:.4f}, {recalls[2]:.4f}, {recalls[3]:.4f}, {recalls[4]:.4f} -> {sum(recalls) / len(recalls):.4f}")
+print(f"  Prec:\t {precs[0]:.4f}, {precs[1]:.4f}, {precs[2]:.4f}, {precs[3]:.4f}, {precs[4]:.4f} -> {sum(precs) / len(precs):.4f}")
