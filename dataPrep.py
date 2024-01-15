@@ -60,20 +60,22 @@ def load_data(dataset = "ml100k", verbose = False):
     return rating_df, num_users, num_items, mean_rating
 
 # add time distance scaled with beta
-def add_u_abs_decay(rating_df, beta = 0.15, method = 'log_old', verbose = False):
+def add_u_abs_decay(rating_df, beta = 0.05, method = 'log', verbose = False):
     
     _beta = beta
     _base = 0.000000001
     _win_unit = 24*3600
     
-    if verbose:
-        print(f'The a_beta in user absolute drift:{_beta}')
-        
     rating_df["timestamp"] = rating_df["timestamp"].astype("int64")
     _start = rating_df['timestamp'].min()
     _end = rating_df['timestamp'].max()
     
     _max_distance = _end - _start 
+    
+    if verbose:
+        print(f'Time time distance between max and min:{_max_distance}')
+        print(f'The a_beta in user absolute drift:{_beta}')
+        
     
     if method == 'linear':
         rating_df['u_abs_decay'] = _base + ((rating_df['timestamp'] - _start) / _win_unit)
@@ -92,7 +94,7 @@ def add_u_abs_decay(rating_df, beta = 0.15, method = 'log_old', verbose = False)
 
 
 # convert timestamp to day, week, month level
-def add_u_rel_decay2(rating_df, beta = 0.25, win = 1, method = 'old_log', verbose = False):
+def add_u_rel_decay2(rating_df, beta = 0.05, win = 1, method = 'log', verbose = False):
     
     local_agg_emb_len = 0
     new_df = None
@@ -106,6 +108,8 @@ def add_u_rel_decay2(rating_df, beta = 0.25, win = 1, method = 'old_log', verbos
         
     # Convert timestamp to int64
     rating_df["timestamp"] = rating_df["timestamp"].astype("int64")
+    
+    
     
     # Find the minimum and maximum timestamp for each user
     user_min_timestamp = rating_df.groupby('userId')['timestamp'].min()
@@ -122,8 +126,11 @@ def add_u_rel_decay2(rating_df, beta = 0.25, win = 1, method = 'old_log', verbos
 
     # Step 4: Calculate the 'u_rel_decay' column
     #rating_df['u_rel_decay'] = ((rating_df['timestamp'] - rating_df['min_timestamp']) /_win_unit)**_beta
-    #rating_df['u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), _beta)
-    rating_df['u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - rating_df['min_timestamp']) / _win_unit), _beta)
+    if method == 'log':
+        rating_df['u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - rating_df['min_timestamp']) / _win_unit), _beta)
+    elif method == 'exp':
+        rating_df['u_rel_decay'] = _base + np.exp(-_beta * (rating_df['timestamp'] - rating_df['min_timestamp']) / _win_unit)
+    #rating_df['u_abs_decay_exp'] = _bias + np.exp(-_beta * (rating_df['timestamp'] - _start) / _dist_unit)
     
     # Step 5: Drop the 'min_timestamp' column if you no longer need it
     rating_df = rating_df.drop('min_timestamp', axis=1)

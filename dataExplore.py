@@ -5,7 +5,7 @@ import dataPrep as dp
 
 
 # Generate timestamps
-timestamps = [i for i in range(2500)]
+timestamps = [i for i in range(250)]
 
 # Create DataFrame
 rating_df = pd.DataFrame({'timestamp': timestamps})
@@ -17,11 +17,11 @@ _total_dist = _end - _start
 
 _dist_unit = 1 # one day
  # hyperparameter that defines time distance weight
-exp_beta = 5
+exp_beta = 0.35
 
-_bias = 0.0001
+_bias = 0 #0.0001
     
-_beta = 0.2
+_beta = 0.05
 rating_df['u_abs_decay_linear'] = _bias + np.power(((rating_df['timestamp'] - _start) / _dist_unit), 1) # linear
 rating_df['u_abs_decay_log'] = _bias + np.power(((rating_df['timestamp'] - _start) / _dist_unit), _beta) # log
 rating_df['u_abs_decay_recip'] = _bias + np.power(((rating_df['timestamp'] - _start) / _dist_unit), 1/_beta) # reciprocal
@@ -33,13 +33,13 @@ sorted_values = sorted(rating_df['u_abs_decay_linear'])
 #plt.plot(sorted_values, label = 'linear')
     
 sorted_values = sorted(rating_df['u_abs_decay_log'])
-#plt.plot(sorted_values, label = 'log')
+plt.plot(sorted_values, label = 'log')
 
 sorted_values = sorted(rating_df['u_abs_decay_recip'])
-plt.plot(sorted_values, label = 'recip')
+#plt.plot(sorted_values, label = 'recip')
 
 sorted_values = sorted(rating_df['u_abs_decay_exp'])
-#plt.plot(sorted_values, label = 'exp')
+plt.plot(sorted_values, label = 'exp')
 
 # Add labels and title
 plt.xlabel('Index (after sorting)')
@@ -49,7 +49,7 @@ plt.title('Sorted Plot of u_abs_decay')
 plt.legend(loc='upper left')
 
 # Set the y-axis limits to be between 1 and 1.1
-plt.ylim(0, 10000000000)
+#plt.ylim(0, 10000000000)
 
 
 # Show the plot
