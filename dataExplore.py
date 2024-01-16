@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import dataPrep as dp
-
+import random
 
 # Generate timestamps
-timestamps = [i for i in range(250)]
+timestamps = [random.randint(0, 2500) for i in range(2500)]
 
 # Create DataFrame
 rating_df = pd.DataFrame({'timestamp': timestamps})
@@ -13,11 +13,13 @@ rating_df["timestamp"] = rating_df["timestamp"].astype("int64")
 _start = rating_df['timestamp'].min()
 _end = rating_df['timestamp'].max()
 
+print(f'min:{_start}, max:{_end}')
+
 _total_dist = _end - _start 
 
 _dist_unit = 1 # one day
  # hyperparameter that defines time distance weight
-exp_beta = 0.35
+exp_beta = 0.01
 
 _bias = 0 #0.0001
     
@@ -27,13 +29,13 @@ rating_df['u_abs_decay_log'] = _bias + np.power(((rating_df['timestamp'] - _star
 rating_df['u_abs_decay_recip'] = _bias + np.power(((rating_df['timestamp'] - _start) / _dist_unit), 1/_beta) # reciprocal
 rating_df['u_abs_decay_exp'] = _bias + np.exp(-exp_beta * (rating_df['timestamp'] - _start) / _dist_unit) # exp
 
-
+print(rating_df)
 
 sorted_values = sorted(rating_df['u_abs_decay_linear'])
 #plt.plot(sorted_values, label = 'linear')
     
 sorted_values = sorted(rating_df['u_abs_decay_log'])
-plt.plot(sorted_values, label = 'log')
+#plt.plot(sorted_values, label = 'log')
 
 sorted_values = sorted(rating_df['u_abs_decay_recip'])
 #plt.plot(sorted_values, label = 'recip')
@@ -49,7 +51,8 @@ plt.title('Sorted Plot of u_abs_decay')
 plt.legend(loc='upper left')
 
 # Set the y-axis limits to be between 1 and 1.1
-#plt.ylim(0, 10000000000)
+#plt.ylim(0, 5e-44)
+#plt.xlim(0, 5)
 
 
 # Show the plot

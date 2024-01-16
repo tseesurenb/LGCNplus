@@ -31,5 +31,4 @@ def parse_args():
     parser.add_argument('--r_method', type=str, default='log')
     parser.add_argument('--loadedModel', type=bool, default=False)
     
-    
     return parser.parse_args()
