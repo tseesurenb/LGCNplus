@@ -232,7 +232,10 @@ rmses = []
 recalls = []
 precs = []
 
+exp_n = 1
+
 for seed in rand_seed:
+    print(f'Experiment ({exp_n}) starts with seed:{seed}')
     rmse, recall, prec = run_experiment(rating_df=rating_df, 
                                         num_users=num_users, 
                                         num_items=num_items, 
@@ -244,6 +247,7 @@ for seed in rand_seed:
     rmses.append(rmse)
     recalls.append(recall)
     precs.append(prec)
+    exp_n += 1
 
 print(f"  RMSE:\t {rmses[0]:.4f}, {rmses[1]:.4f}, {rmses[2]:.4f}, {rmses[3]:.4f}, {rmses[4]:.4f} -> {sum(rmses) / len(rmses):.4f}")
 print(f"Recall:\t {recalls[0]:.4f}, {recalls[1]:.4f}, {recalls[2]:.4f}, {recalls[3]:.4f}, {recalls[4]:.4f} -> {sum(recalls) / len(recalls):.4f}")
