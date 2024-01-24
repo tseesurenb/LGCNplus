@@ -8,10 +8,8 @@ Tseesuren et al. tempLGCN: Simple and Time-aware Graph Convolution Network for C
 
 import os
 from os.path import join
-import torch
 from enum import Enum
 from parse import parse_args
-import multiprocessing
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 args = parse_args()

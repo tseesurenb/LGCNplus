@@ -9,12 +9,10 @@ Tseesuren et al. tempLGCN: Simple and Time-aware Graph Convolution Network for C
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
-import pickle
-import datetime
 
 import torch
 from torch import nn, optim
-from utils import get_recall_at_k, print_rmse, minibatch 
+from utils import get_recall_at_k, minibatch 
 import dataPrep as dp
 from model import LGCN 
 import time
@@ -233,6 +231,8 @@ recalls = []
 precs = []
 
 exp_n = 1
+
+print(config)
 
 for seed in rand_seed:
     print(f'Experiment ({exp_n}) starts with seed:{seed}')

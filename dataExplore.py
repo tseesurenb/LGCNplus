@@ -19,7 +19,7 @@ _total_dist = _end - _start
 
 _dist_unit = 1 # one day
  # hyperparameter that defines time distance weight
-exp_beta = 0.01
+exp_beta = 2
 
 _bias = 0 #0.0001
     
@@ -35,13 +35,13 @@ sorted_values = sorted(rating_df['u_abs_decay_linear'])
 #plt.plot(sorted_values, label = 'linear')
     
 sorted_values = sorted(rating_df['u_abs_decay_log'])
-#plt.plot(sorted_values, label = 'log')
+plt.plot(sorted_values, label = 'log')
 
 sorted_values = sorted(rating_df['u_abs_decay_recip'])
 #plt.plot(sorted_values, label = 'recip')
 
 sorted_values = sorted(rating_df['u_abs_decay_exp'])
-plt.plot(sorted_values, label = 'exp')
+#plt.plot(sorted_values, label = 'exp')
 
 # Add labels and title
 plt.xlabel('Index (after sorting)')
@@ -52,7 +52,7 @@ plt.legend(loc='upper left')
 
 # Set the y-axis limits to be between 1 and 1.1
 #plt.ylim(0, 5e-44)
-#plt.xlim(0, 5)
+#plt.xlim(2480, 2500)
 
 
 # Show the plot
