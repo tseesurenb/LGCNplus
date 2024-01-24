@@ -202,7 +202,7 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
         #if epoch % g_epochs_per_lr_decay == 0 and epoch != 0:
         #    scheduler.step()
         
-    tqdm.write(f"\033[1mMinimum Seed {seed} -> RMSE: {min_RMSE_loss} at epoch {min_RMSE_epoch} with Recall, Precision: {min_RECALL_f, min_PRECISION_f}\033[0m")
+    tqdm.write(f"\033[1mMinimum Seed {seed} -> RMSE: {min_RMSE_loss} at epoch {min_RMSE_epoch} with Recall, Precision, F1: {min_RECALL_f, min_PRECISION_f, (2*min_RECALL_f *min_PRECISION_f)/(min_RECALL_f + min_PRECISION_f)}\033[0m")
     #tqdm.write(f"The experiment is complete.")
     
     return min_RMSE, min_RECALL, min_PRECISION
