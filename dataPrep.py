@@ -93,7 +93,7 @@ def add_u_abs_decay(rating_df, beta = 0.05, method = 'log', verbose = False):
 
 
 # convert timestamp to day, week, month level
-def add_u_rel_decay(rating_df, beta = 0.05, win_size = 1, method = 'log', verbose = False):
+def add_u_rel_decay(rating_df, beta = 25, win_size = 1, method = 'exp', verbose = False):
     
     _beta = beta
     _base = 0.000000001
