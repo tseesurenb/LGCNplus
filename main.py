@@ -101,6 +101,7 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
     min_RMSE_epoch = 0
     min_RECALL = 0
     min_PRECISION = 0
+    min_F1 = 0
 
     if g_loadedModel:
         model.load_state_dict(torch.load('models/' + g_dataset + '_model.pt'))
@@ -180,6 +181,7 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                 f_val_loss = "{:.4f}".format(round(np.sqrt(val_loss.item()), 4))
                 f_recall = "{:.4f}".format(round(recall, 4))
                 f_precision = "{:.4f}".format(round(precision, 4))
+                f_f1_score = "{:.4f}".format(round((2*recall*precision)/(recall + precision), 4))
                 f_time = "{:.2f}".format(round(time.time() - start_time, 2))
                 f_epoch = "{:.0f}".format(epoch)
                             
@@ -192,17 +194,18 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                     min_PRECISION_f = f_precision
                     min_RECALL = recall
                     min_PRECISION = precision
+                    min_F1 = f_f1_score
 
                 if epoch %  (g_epochs_per_eval) == 0:
                     tqdm.write(f"[Epoch {f_epoch} - {f_time}]\tRMSE(train -> val): {f_train_loss}"
                             f" -> \033[1m{f_val_loss}\033[0m | "
-                            f"Recall, Prec:{f_recall, f_precision}")
+                            f"Recall, Prec, F_score:{f_recall, f_precision, f_f1_score}")
                 
         avg_compute_time += (time.time() - start_time)   
         #if epoch % g_epochs_per_lr_decay == 0 and epoch != 0:
         #    scheduler.step()
         
-    tqdm.write(f"\033[1mMinimum Seed {seed} -> RMSE: {min_RMSE_loss} at epoch {min_RMSE_epoch} with Recall, Precision, F1: {min_RECALL_f, min_PRECISION_f, (2*min_RECALL_f *min_PRECISION_f)/(min_RECALL_f + min_PRECISION_f)}\033[0m")
+    tqdm.write(f"\033[1mMinimum Seed {seed} -> RMSE: {min_RMSE_loss} at epoch {min_RMSE_epoch} with Recall, Precision, F1: {min_RECALL_f, min_PRECISION_f, min_F1}\033[0m")
     #tqdm.write(f"The experiment is complete.")
     
     return min_RMSE, min_RECALL, min_PRECISION
@@ -232,7 +235,6 @@ precs = []
 
 exp_n = 1
 
-print(config)
 
 for seed in rand_seed:
     print(f'Experiment ({exp_n}) starts with seed:{seed}')
