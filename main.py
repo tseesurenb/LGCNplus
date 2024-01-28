@@ -181,7 +181,11 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                 f_val_loss = "{:.4f}".format(round(np.sqrt(val_loss.item()), 4))
                 f_recall = "{:.4f}".format(round(recall, 4))
                 f_precision = "{:.4f}".format(round(precision, 4))
-                f_f1_score = "{:.4f}".format(round((2*recall*precision)/(recall + precision), 4))
+                if (recall + precision) != 0:
+                    f_f1_score = "{:.4f}".format(round((2*recall*precision)/(recall + precision), 4))
+                else:
+                    f_f1_score = 0
+                    
                 f_time = "{:.2f}".format(round(time.time() - start_time, 2))
                 f_epoch = "{:.0f}".format(epoch)
                             
