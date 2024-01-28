@@ -235,6 +235,7 @@ precs = []
 
 exp_n = 1
 
+print(rating_df)
 
 for seed in rand_seed:
     print(f'Experiment ({exp_n}) starts with seed:{seed}')
