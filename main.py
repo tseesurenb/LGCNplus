@@ -188,7 +188,7 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                     f_f1_score = 0
                     
                 f_time = "{:.2f}".format(round(time.time() - start_time, 2))
-                f_epoch = "{:.4f}".format(epoch)
+                f_epoch = "{:4.f}".format(epoch)
                             
                 if min_RMSE > np.sqrt(val_loss.item()):
                     torch.save(model.state_dict(), 'models/' + g_dataset + '_model.pt')
