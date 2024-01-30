@@ -96,6 +96,7 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
 
     loss_func = nn.MSELoss()
 
+    all_compute_time = 0
     avg_compute_time = 0
     min_RMSE = 1000
     min_RMSE_epoch = 0
@@ -201,11 +202,12 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                     min_F1 = f_f1_score
 
                 if epoch %  (g_epochs_per_eval) == 0:
-                    tqdm.write(f"[Epoch {f_epoch} - {f_time}, {avg_compute_time/(epoch+1)}]\tRMSE(train -> val): {f_train_loss}"
+                    tqdm.write(f"[Epoch {f_epoch} - {f_time}, {avg_compute_time}]\tRMSE(train -> val): {f_train_loss}"
                             f" -> \033[1m{f_val_loss}\033[0m | "
                             f"Recall, Prec, F_score:{f_recall, f_precision, f_f1_score}")
                 
-        avg_compute_time += (time.time() - start_time)   
+        all_compute_time += f_time
+        avg_compute_time = "{:.4f}".format(round(all_compute_time/(epoch+1), 4)) 
         #if epoch % g_epochs_per_lr_decay == 0 and epoch != 0:
         #    scheduler.step()
         
