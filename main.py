@@ -97,7 +97,7 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
     loss_func = nn.MSELoss()
 
     all_compute_time = 0
-    avg_compute_time = 0
+    avg_compute_time = "{:.4f}".format(round(0, 4))
     min_RMSE = 1000
     min_RMSE_epoch = 0
     min_RECALL = 0
@@ -188,7 +188,7 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                     f_f1_score = 0
                     
                 f_time = "{:.2f}".format(round(time.time() - start_time, 2))
-                f_epoch = "{:.0f}".format(epoch)
+                f_epoch = "{:.4f}".format(epoch)
                             
                 if min_RMSE > np.sqrt(val_loss.item()):
                     torch.save(model.state_dict(), 'models/' + g_dataset + '_model.pt')
