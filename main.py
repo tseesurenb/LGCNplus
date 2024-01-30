@@ -206,7 +206,7 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                             f" -> \033[1m{f_val_loss}\033[0m | "
                             f"Recall, Prec, F_score:{f_recall, f_precision, f_f1_score}")
                 
-        all_compute_time += f_time
+        all_compute_time += (time.time() - start_time)
         avg_compute_time = "{:.4f}".format(round(all_compute_time/(epoch+1), 4)) 
         #if epoch % g_epochs_per_lr_decay == 0 and epoch != 0:
         #    scheduler.step()
