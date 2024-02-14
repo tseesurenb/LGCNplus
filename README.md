@@ -30,7 +30,7 @@ python main.py
 
 2. --dataset chooses the dataset to run. The options are: 'ml100k' and 'ml1m'. The default value: 'ml100k'.
 
-3. --batch_size sets the batch size. We chose 95000 for ml100k and 9500000 for ml1m making a fullbatch. The default value: 95000.
+3. --batch_size sets the batch size. We chose 95000 for ml100k and 950000 for ml1m making a fullbatch. The default value: 95000.
 
 4. --epochs sets the number of epochs to run. The default value: 991.
 
