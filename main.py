@@ -1,7 +1,7 @@
 '''
 Created on Oct 12, 2023
 Pytorch Implementation of TempLGCN in
-Tseesuren et al. tempLGCN: Simple and Time-aware Graph Convolution Network for Collaborative Filtering Recommendation
+Tseesuren et al. tempLGCN: Temporal Collaborative Filtering with Graph Convolutional Networks
 
 @author: Tseesuren Batsuuri (tseesuren.batsuuri@hdr.mq.edu.au)
 '''
@@ -68,7 +68,7 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                 num_items=num_items,
                 num_layers=g_num_layers,
                 embedding_dim = g_emb_dim,
-                add_self_loops = False,
+                add_self_loops = True,
                 mu = g_mean_rating,
                 model=g_model,
                 u_stats = u_stats,

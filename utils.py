@@ -1,10 +1,11 @@
 '''
 Created on Oct 12, 2023
 Pytorch Implementation of TempLGCN in
-Tseesuren et al. tempLGCN: Simple and Dynamic Graph Convolution Network for Collaborative Filtering Recommendation
+Tseesuren et al. tempLGCN: Temporal Collaborative Filtering with Graph Convolutional Networks
 
 @author: Tseesuren Batsuuri (tseesuren.batsuuri@hdr.mq.edu.au)
 '''
+
 from collections import defaultdict
 import numpy as np
 import sys
