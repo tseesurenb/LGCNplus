@@ -26,7 +26,7 @@ python main.py
 
 *NOTE*, here are some key parameters:
 
-1. --model sets the model to run. The pptions are: 'lgcn' - LightGCN, 'lgcn_b' - LGCN with baseline signal, 'lgcn_b_a' - LGCN with baseline and absolute temporal signals, 'lgcn_b_r' - LGCN with baseline and relative temporal signals, 'lgcn_b_ar' - tempLGCN i.e., the full model including the baseline and absolute and relative temporal signals. The default value: 'lgcn_b_ar'
+1. --model sets the model to run. The options are: 'lgcn' - LightGCN, 'lgcn_b' - LGCN with baseline signal, 'lgcn_b_a' - LGCN with baseline and absolute temporal signals, 'lgcn_b_r' - LGCN with baseline and relative temporal signals, 'lgcn_b_ar' - tempLGCN i.e., the full model including the baseline and absolute and relative temporal signals. The default value: 'lgcn_b_ar'
 
 2. --dataset chooses the dataset to run. The options are: 'ml100k' and 'ml1m'. The default value: 'ml100k'.
 
