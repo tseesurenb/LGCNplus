@@ -56,13 +56,7 @@ python main.py
 ## Extend:
 * If you want to run tempLGCN on your own dataset, you can just feed any data that has "user item rating timestamp" format and use --dataset parameter to provide the name of your dataset. Datasets are stored in the data subfolder.
 
-## Results
-
-***pytorch* version results** :
-
-(*for seed=2023 which is default one *)
-
-* ML-100k:
+## Results of ML-100k:
 
   RMSE:          0.8877, 0.8861, 0.8870, 0.8865, 0.8869 -> 0.8868
 
