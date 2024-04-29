@@ -1,10 +1,7 @@
 
 ## LGCNplus-pytorch (we named the model as tempLGCN in the paper but the repository name is LGCNplus)
 06 Feb 2024
-This is the Pytorch implementation for my thesis "tempLGCN: Temporal Collaborative Filtering with Graph Convolutional Networks".
-The authors are: Tseesuren Batsuuri, Shan Xue, Jian Yang, Jia Wu, and Amin Beheshti
-
-email: tseesuren.batsuuri@hdr.mq.edu.au
+This is the Pytorch implementation for "tempLGCN: Time-Aware Collaborative Filtering with Graph Convolutional Networks".
 
 ## Introduction
 
