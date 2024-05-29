@@ -82,7 +82,8 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                 verbose=g_verbose)
     
         
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    #device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
     '''
     # Check that MPS is available
     if not torch.backends.mps.is_available():
@@ -98,6 +99,8 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
         device = torch.device("mps")
         
     '''
+    
+    device = torch.device('cuda')
     print(f"Device is - {device}")
     model = model.to(device)
     optimizer = optim.Adam(model.parameters(), lr = g_lr, weight_decay=g_decay)
