@@ -1,9 +1,6 @@
 '''
 Created on Oct 12, 2023
-Pytorch Implementation of TempLGCN in
-Tseesuren et al. tempLGCN: Temporal Collaborative Filtering with Graph Convolutional Networks
-
-@author: Tseesuren Batsuuri (tseesuren.batsuuri@hdr.mq.edu.au)
+Pytorch Implementation of tempLGCN: Time-Aware Collaborative Filtering with Graph Convolutional Networks
 '''
 #%%
 import matplotlib.pyplot as plt
@@ -67,4 +64,5 @@ plt.legend(loc='upper left')
 
 # Show the plot
 plt.show()
+
 # %%

@@ -1,10 +1,7 @@
 
 ## LGCNplus-pytorch (we named the model as tempLGCN in the paper but the repository name is LGCNplus)
 06 Feb 2024
-This is the Pytorch implementation for my thesis "tempLGCN: Temporal Collaborative Filtering with Graph Convolutional Networks".
-The authors are: Tseesuren Batsuuri, Shan Xue, Jian Yang, Jia Wu, and Amin Beheshti
-
-email: tseesuren.batsuuri@hdr.mq.edu.au
+This is the Pytorch implementation for "tempLGCN: Time-Aware Collaborative Filtering with Graph Convolutional Networks".
 
 ## Introduction
 
@@ -56,17 +53,11 @@ python main.py
 ## Extend:
 * If you want to run tempLGCN on your own dataset, you can just feed any data that has "user item rating timestamp" format and use --dataset parameter to provide the name of your dataset. Datasets are stored in the data subfolder.
 
-## Results
+## Results of ML-100k:
 
-***pytorch* version results** :
+  RMSE:          0.8877, 0.8861, 0.8870, 0.8865, 0.8869 -> 0.8868
 
-(*for seed=2023 which is default one *)
+  Recall@20:     0.6670, 0.6660, 0.6650, 0.6630, 0.6660 -> 0.6654
 
-* ML-100k:
+  Prec@20:       0.6810, 0.6800, 0.6760, 0.6810, 0.6830 -> 0.6802
 
-     RMSE:  0.8877, 0.8861, 0.8870, 0.8865, 0.8869 -> 0.8868
-Recall@20:  0.6670, 0.6660, 0.6650, 0.6630, 0.6660 -> 0.6654
-  Prec@20:  0.6810, 0.6800, 0.6760, 0.6810, 0.6830 -> 0.6802
-
-=======
-# tempLGCN
