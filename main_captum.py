@@ -9,7 +9,6 @@ Tseesuren et al. tempLGCN: Temporal Collaborative Filtering with Graph Convoluti
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 import torch
 from torch import nn, optim
@@ -18,15 +17,11 @@ import dataPrep as dp
 from model import LGCN 
 import time
 from world import config
-
 import torch
 
-np.random.seed(42)
-# Set a random seed
-torch.manual_seed(42)
+from captum.attr import IntegratedGradients, NeuronConductance, LayerConductance
 
-
-
+    
 def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_seed):
     g_lr = config['lr']
     g_epochs = config['epochs']
@@ -48,8 +43,7 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
 
     e_idx, e_vals, e_ts, e_abs_t_decay, e_rel_t_decay = dp.get_edge_values(rating_df)
 
-    split_ratio = 0.05
-    o_train_idx, o_train_vals, o_train_ts, o_train_abs_t_decay, o_train_rel_t_decay, o_val_idx, o_val_vals, o_val_ts, o_val_abs_t_decay, o_val_rel_t_decay = dp.train_test_split_by_user(e_idx=e_idx, e_vals=e_vals, e_ts=e_ts, e_abs_t_decay=e_abs_t_decay, e_rel_t_decay = e_rel_t_decay, test_size=split_ratio, seed=g_seed)
+    o_train_idx, o_train_vals, o_train_ts, o_train_abs_t_decay, o_train_rel_t_decay, o_val_idx, o_val_vals, o_val_ts, o_val_abs_t_decay, o_val_rel_t_decay = dp.train_test_split_by_user(e_idx=e_idx, e_vals=e_vals, e_ts=e_ts, e_abs_t_decay=e_abs_t_decay, e_rel_t_decay = e_rel_t_decay, test_size=0.1, seed=g_seed)
 
     train_idx, train_v, train_rts, train_abs_t_decay, train_rel_t_decay = dp.rmat_2_adjmat(num_users, num_items, o_train_idx, o_train_vals, o_train_ts, o_train_abs_t_decay, o_train_rel_t_decay)
     val_idx, val_v, val_rts, val_abs_t_decay, val_rel_t_decay = dp.rmat_2_adjmat(num_users, num_items, o_val_idx, o_val_vals, o_val_ts, o_val_abs_t_decay, o_val_rel_t_decay)
@@ -83,25 +77,8 @@ def run_experiment(rating_df, num_users, num_items, g_mean_rating, config, g_see
                 model=g_model,
                 u_stats = u_stats,
                 verbose=g_verbose)
-    
         
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    '''
-    # Check that MPS is available
-    if not torch.backends.mps.is_available():
-        if not torch.backends.mps.is_built():
-            print("MPS not available because the current PyTorch install was not "
-                "built with MPS enabled.")
-        else:
-            print("MPS not available because the current MacOS version is not 12.3+ "
-                "and/or you do not have an MPS-enabled device on this machine.")
-
-        device = torch.device('cpu')
-    else:
-        device = torch.device("mps")
-        
-    '''
-    print(f"Device is - {device}")
     model = model.to(device)
     optimizer = optim.Adam(model.parameters(), lr = g_lr, weight_decay=g_decay)
     #scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma = 0.95)
@@ -251,8 +228,6 @@ g_dataset = config['dataset']
 g_verbose = config['verbose']
 g_model = config['model']
 g_win = config['win']    
-by_time = config['by_time']
-
 # load the dataset
 rating_df, num_users, num_items, g_mean_rating = dp.load_data(dataset=g_dataset, verbose=g_verbose)
 # add time distance column by calculating timestamp from the fixed minimum point
@@ -263,22 +238,6 @@ if g_model == 'lgcn_b_r' or g_model == 'lgcn_b_ar':
     rating_df = dp.add_u_rel_decay(rating_df=rating_df, beta=g_r_beta, win_size = g_win, method=r_method, verbose=g_verbose)
 
 rand_seed = [7, 12, 89, 91, 41]
-
-if by_time:
-    rating_df['date'] = pd.to_datetime(rating_df['timestamp'], unit='s')
-    rating_df.set_index('date', inplace=True)
-
-    # Sort the index (date)
-    rating_df.sort_index(inplace=True)
-
-    #dp.scatter_emb(rating_df=rating_df, u_id=4, model=g_model)
-    print('Set date index and sorted by date')
-
-print('Head of the df')
-print(rating_df.head())
-print('Tail of the df')
-print(rating_df.tail())
-print(f"Max: {rating_df.index.max()} and min: {rating_df.index.min()} of date")
 
 rmses = []
 recalls = []
@@ -300,9 +259,23 @@ for seed in rand_seed:
     recalls.append(recall)
     precs.append(prec)
     exp_n += 1
-
+    
 print(f"  RMSE:\t {rmses[0]:.4f}, {rmses[1]:.4f}, {rmses[2]:.4f}, {rmses[3]:.4f}, {rmses[4]:.4f} -> {sum(rmses) / len(rmses):.4f}")
 print(f"Recall:\t {recalls[0]:.4f}, {recalls[1]:.4f}, {recalls[2]:.4f}, {recalls[3]:.4f}, {recalls[4]:.4f} -> {sum(recalls) / len(recalls):.4f}")
 print(f"  Prec:\t {precs[0]:.4f}, {precs[1]:.4f}, {precs[2]:.4f}, {precs[3]:.4f}, {precs[4]:.4f} -> {sum(precs) / len(precs):.4f}")
 
-# %%
+#%%
+
+model = LGCN(num_users=num_users,
+            num_items=num_items,
+            num_layers=4,
+            embedding_dim = 64,
+            add_self_loops = True,
+            mu = g_mean_rating,
+            model=g_model,
+            verbose=g_verbose)
+
+cond = LayerConductance(model, model.f)
+
+cond_vals = cond.attribute(b_src, b_dest, train_idx, b_abs_t_decay, b_rel_t_decay,target=1)
+            cond_vals = cond_vals.detach().numpy()

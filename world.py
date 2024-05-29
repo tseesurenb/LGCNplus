@@ -44,6 +44,7 @@ config['r_beta'] = args.r_beta
 config['a_beta'] = args.a_beta
 config['a_method'] = args.a_method
 config['r_method'] = args.r_method
+config['by_time'] = args.by_time
 config['loadedModel'] = args.loadedModel
 
 #GPU = torch.cuda.is_available()

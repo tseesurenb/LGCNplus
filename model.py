@@ -14,6 +14,7 @@ import torch
 from torch_geometric.utils import softmax
 import torch.nn.functional as F
 
+
 class LGCN(MessagePassing):    
     def __init__(self, 
                  model,
@@ -41,23 +42,23 @@ class LGCN(MessagePassing):
         self.u_abs_drift = False
         self.u_rel_drift = False
         
-        if model == 'lgcn_b':
+        if model == 'lgcn_b':  # lgcn + baseline
             self.item_baseline = True
             self.user_baseline = True
-        elif model == 'lgcn_b_a':
+        elif model == 'lgcn_b_a':  # lgcn + baseline + absolute
             self.u_abs_drift = True
             self.user_baseline = True
             self.item_baseline = True
-        elif model == 'lgcn_b_r':
+        elif model == 'lgcn_b_r':  # lgcn + baseline + relative
             self.u_rel_drift = True
             self.user_baseline = True
             self.item_baseline = True
-        elif model == 'lgcn_b_ar':
+        elif model == 'lgcn_b_ar': # lgcn + baseline + absolute + relative 
             self.u_abs_drift = True
             self.u_rel_drift = True
             self.user_baseline = True
             self.item_baseline = True
-        else:
+        else: # pure lightGCN model only
             model = 'lgcn'
             self.mu = 0
         
@@ -99,6 +100,7 @@ class LGCN(MessagePassing):
                 print("The relative user drift temporal embedding is ON.")
                 
         self.f = nn.ReLU()
+        #self.f = nn.GELU()
         
     def forward(self, src: Tensor, dest: Tensor, edge_index: Tensor, u_abs_t_decay: Tensor, u_rel_t_decay: Tensor):
         
@@ -141,7 +143,7 @@ class LGCN(MessagePassing):
             _u_rel_drift_emb = self._u_rel_drift_emb.weight[src]
             _u_rel_drift_emb = _u_rel_drift_emb * u_rel_t_decay.unsqueeze(1) 
             _inner_pro = _inner_pro + _u_rel_drift_emb
-                
+             
         _inner_pro = torch.sum(_inner_pro, dim=-1)
         
         if self.model != 'lgcn': 

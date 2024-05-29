@@ -5,7 +5,7 @@ Tseesuren et al. tempLGCN: Temporal Collaborative Filtering with Graph Convoluti
 
 @author: Tseesuren Batsuuri (tseesuren.batsuuri@hdr.mq.edu.au)
 '''
-
+#%%
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -67,3 +67,4 @@ plt.legend(loc='upper left')
 
 # Show the plot
 plt.show()
+# %%

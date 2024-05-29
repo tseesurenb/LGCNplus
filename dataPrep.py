@@ -21,6 +21,42 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
+def scatter_emb(rating_df, u_id, model):
+    
+    #rating_df['date'] = pd.to_datetime(rating_df['timestamp'], unit='s')
+    #rating_df.set_index('date')
+    
+    udf = rating_df[rating_df['userId'] == u_id]
+    
+    # Create a figure and axes
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+
+    if model == 'lgcn_b_a' or model == 'lgcn_b_ar':
+        # Plotting u_abs_decay
+        sc1 = ax1.scatter(udf['date'], udf['u_abs_decay'], c=udf['u_abs_decay'], cmap='viridis', alpha=0.7)
+        ax1.set_xlabel('Date')
+        ax1.set_ylabel('u_abs_decay')
+        ax1.set_title('u_abs_decay vs Date for userId 107')
+        # Adding colorbars
+        cbar1 = fig.colorbar(sc1, ax=ax1)
+        cbar1.set_label('u_abs_decay')
+   
+    if model == 'lgcn_b_r' or model == 'lgcn_b_ar':
+        # Plotting u_rel_decay
+        sc2 = ax2.scatter(udf['date'], udf['u_rel_decay'], c=udf['u_rel_decay'], cmap='viridis', alpha=0.7)
+        ax2.set_xlabel('Date')
+        ax2.set_ylabel('u_rel_decay')
+        ax2.set_title('u_rel_decay vs Date for userId 107')
+        cbar2 = fig.colorbar(sc2, ax=ax2)
+        cbar2.set_label('u_rel_decay')
+        
+    # Adjust layout
+    plt.tight_layout()
+
+    # Display the plot
+    plt.show()
+    
 # load dataset        
 def load_data(dataset = "ml100k", verbose = False):
     
@@ -86,11 +122,17 @@ def add_u_abs_decay(rating_df, beta = 0.05, method = 'log', verbose = False):
         rating_df['u_abs_decay'] = _base + np.power(((rating_df['timestamp'] - _start) / _win_unit), 1/_beta)
     if method == 'exp':
         rating_df['u_abs_decay'] = _base + np.exp(-_beta * (rating_df['timestamp'] - _start) / _win_unit)
+    if method == 'sigmoid':
+        rating_df['u_abs_decay'] = sigmoid(_base + (rating_df['timestamp'] - _start) / _win_unit)
                 
     print(f'The absolute decay method is {method} with param: {beta}')
     
     return rating_df
 
+def sigmoid(x):
+    z = 1/(1 + np.exp(-x)) 
+    
+    return z
 
 # convert timestamp to day, week, month level
 def add_u_rel_decay(rating_df, beta = 25, win_size = 1, method = 'exp', verbose = False):
@@ -118,6 +160,8 @@ def add_u_rel_decay(rating_df, beta = 25, win_size = 1, method = 'exp', verbose 
         rating_df['u_rel_decay'] = _base + np.power(((rating_df['timestamp'] - rating_df['min_timestamp']) / _win_unit), _beta)
     elif method == 'exp':
         rating_df['u_rel_decay'] = _base + np.exp(-_beta * (rating_df['timestamp'] - rating_df['min_timestamp']) / _win_unit)
+    if method == 'sigmoid':
+        rating_df['u_abs_decay'] = sigmoid(_base + (rating_df['timestamp'] - rating_df['min_timestamp']) / _win_unit)
     
     # Step 5: Drop the 'min_timestamp' column if you no longer need it
     rating_df = rating_df.drop('min_timestamp', axis=1)
